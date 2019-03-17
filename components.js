@@ -43,15 +43,27 @@ Vue.component('contentartists',{
         <tbody>
             <tr v-for="item in artists" class="clickable">
                 <td>{{ item.name }} <i v-if="item.disambiguation">({{ item.disambiguation }})</i> </td>
-                <td><div v-if="item.type">{{ item.type }}</div></td>
-                <td><div v-if="item.area">{{ item.area.name }}</div></td>
+                <td><div v-if="item.type"><i :class="type( item.type )"></i></div></td>
+                <td><div v-if="item.area"><i :class="flag(item.area.name)"></i></div></td>
                 <td><div v-if="item['life-span']">{{ item['life-span'].begin }}</div></td>   
                 <td><div v-if="item['life-span']">{{ item['life-span'].end }}</div></td>
             </tr>
             <div v-if="artists.length==0">Aucun resultat.</div>
         </tbody>  
     </table>  
-    `
+    `,
+    methods:{
+        type:function(type){
+            if(type=='Person'){
+                return "fas fa-user";
+            }else if(type=="Group"){
+                return "fas fa-users";
+            }
+        },
+        flag:function(country){
+            return country + " flag";
+        }
+    }
 })
 
 //Display release response

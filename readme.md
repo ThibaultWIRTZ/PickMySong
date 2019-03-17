@@ -8,6 +8,10 @@ Dans ce projet, nous devions développer un site nous permettant de rechercher d
 
 En ce qui concerne la récupération des informations, nous devions donc utiliser le site https://musicbrainz.org. Cependant, cette API ne comportant pas les images des réalisations musicales, nous avons utilisé https://coverartarchives.org pour récupérer les images pochettes.
 
+Afin de permettre un affichage adapté à l'utilisateur, des icones sont utilisés à l'aide des librairies suivante :
+- Semantic UI : Pour les drapeaux
+- Font awesome : Pour le reste
+
 ## Initialisation du projet
 
 Afin de pouvoir faire fonctionner ce projet, il vous faudra un serveur apache (WAMP,XAMP,LAMP). Si vous le faites tourner en local, vous devrez donc installer une extension pour pouvoir faire des requêtes ajax en cross-origin comme https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi pour google chrome. Il vous faudra donc ajouter les addresses des APIs utilisées dans ce site web à savoir https://musicbrainz.org et https://coverartarchives.org dans "Intercepted URLs or URL patterns".

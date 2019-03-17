@@ -9,6 +9,10 @@
 
         <!-- Font awesome -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        
+        <!-- Semantic ui flags -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/flag.min.css">
+
 
         <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>        
@@ -26,14 +30,14 @@
                 </nav>
             </header>
 
-            <main id="mainCtr" class="col-md-10 offset-md-1">
-                <div v-if="!errored">                    
-                    <div v-if="albumDetails">
+            <main id="mainCtr" class="col-md-10 offset-md-1">                
+                <div v-if="!errored">
+                    <div v-if="albumDetails">                        
                         <div class="d-flex w-100 justify-content-start"><h2 v-on:click="backToReleaseResult" class="clickable"><i class="fas fa-arrow-left"></i></h2></div>                        
                         <albumdetails v-if="albumDetailResponse" :albumdetails="albumDetailResponse" :coversrc="albumCoverSrc"></albumdetails>
                     </div>
                     
-                    <div v-else-if="responseData">
+                    <div v-else-if="responseData">                        
                         <h1 class="text-center">Résultat de la recherche pour : <br/><b v-if="searchStringDisplay">{{ searchStringDisplay }}</b></h1>                    
                         <contentartists v-if="responseData.artists" :artists="responseData.artists"></contentartists>
                         <contentreleases v-on:getalbumdetails="displayReleaseDetails" v-else-if="everythingIsLoaded && responseData.releases" :images="images" :releases="responseData.releases"></contentreleases>                    
@@ -54,8 +58,8 @@
         <!-- Bootstrap scripts -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>                
+
         <!-- Vue instance & components -->
         <script src="components.js"></script>
         <script src="vue_controller.js"></script>        
