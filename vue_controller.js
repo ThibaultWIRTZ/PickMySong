@@ -140,7 +140,10 @@ var app = new Vue({
         },
         backToReleaseResult(){
             //Display previous result
-                this.albumDetails=false;                
+                this.albumDetails=false;      
+                setTimeout(()=>{
+                    this.previousPosition=0;
+                },1);          
         },
         scrollToTop() {
             //Scroll to the top of the window
@@ -164,7 +167,7 @@ var app = new Vue({
     updated() {
         //Scroll to previous position
             if(this.responseData.releases && !this.albumDetails){
-                this.scrollToStoredItem();
+                this.scrollToStoredItem();                
             }
     }    
 })
