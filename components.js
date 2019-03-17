@@ -103,7 +103,7 @@ Vue.component('contentreleases',{
     },
 })
 
-//Display release response
+//Display albumdetails
 Vue.component('albumdetails',{
     props:['albumdetails','coversrc'],
     template: `
@@ -137,7 +137,7 @@ Vue.component('albumdetails',{
     }
 })
 
-//Display list of tracks response
+//Display tracklist of an album
 Vue.component('trackslist',{
     props:['tracks'],
     template: `

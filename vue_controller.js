@@ -20,6 +20,11 @@ var app = new Vue({
     },
 
     methods:{
+        backHome(){
+            this.albumDetails=false;
+            this.responseData="";
+            this.error="";
+        },
         getInfo(){
             //Get information from musicbrainz if there is something in the input
                 this.loading=true;

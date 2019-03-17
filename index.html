@@ -13,7 +13,6 @@
         <!-- Semantic ui flags -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/flag.min.css">
 
-
         <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>        
     </head>
@@ -21,7 +20,7 @@
         <div id="application">                
             <header>
                 <nav class="navbar navbar-dark bg-dark">
-                    <a class="navbar-brand" href="#"><b>PickMySong</b></a>
+                    <a class="navbar-brand clickable" v-on:click="backHome"><b>PickMySong</b></a>
                     <form id="searchBox" class="form-inline">                        
                         <input v-bind:class="{ 'error' : errorInput }" v-model:bind="searchString" class="form-input form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                         <typeselector ref="components" errorvar="errorDropdown" v-on:newtype="setType"></typeselector>
