@@ -3,20 +3,29 @@
 var app = new Vue({
     el:"#application",
     data:{
-        loading:false,          //Bool : True if the application load something
-        errored:false,          //Bool : True if there is an error
-        errorText:"",           //String : If there is an error that make the work of the application not work properly store the message
-        responseData:"",        //Array : Get the response of the ajax methos that get artists or releases
-        albumDetailResponse:"", //Array : Get the response of the ajax method that get the details of a release
-        albumDetails:false,     //Boolean : True to display release details
-        albumCoverSrc:"",       //String : Source of the cover which will be displayed
-        searchString:"",        //String : Content of the search bar
-        searchStringDisplay:'', //String : Content will display what the user researched
-        searchType:"release",   //String : Type selected in the dropdown
-        errorInput:false,       //Bool : True if the search bar is empty
-        images:[],              //Array : Get the sources of covers
-        isImages:[],            //Array : If everything if loaded, the number of booleans in this array equals the number of element in 'images'
-        previousPosition:0      //Integer : Contain the position of the element we want to scroll to
+        loading:false,           //Bool : True if the application load something
+        errored:false,           //Bool : True if there is an error
+        errorText:"",            //String : If there is an error that make the work of the application not work properly store the message        
+        
+        //Pages indicator
+        albumDetails:false,      //Boolean : True to display release details
+        artistDetails:false,     //Boolean : True to display artist details
+        
+        //Responses
+        responseData:"",         //Array : Get the response of the ajax methos that get artists or releases
+        artistDetailResponse:"", //Array : Get the response of the ajax method that get the details of an artist
+        albumDetailResponse:"",  //Array : Get the response of the ajax method that get the details of a release
+        artistReleasesDetails:[],//Array : Details of every songs of an artist
+        images:[],               //Array : Get the sources of covers
+        
+        isImages:[],             //Array : If everything if loaded, the number of booleans in this array equals the number of element in 'images'
+        albumCoverSrc:"",        //String : Source of the cover which will be displayed
+        searchString:"",         //String : Content of the search bar
+        searchStringDisplay:'',  //String : Content will display what the user researched
+        searchType:"release",    //String : Type selected in the dropdown
+        errorInput:false,        //Boolean : True if the search bar is empty        
+        previousPosition:0,      //Integer : Contain the position on the window of the element we cicked
+        previousPage:''          //String : Name of the previous page
     },
 
     methods:{
@@ -25,8 +34,9 @@ var app = new Vue({
             this.responseData="";
             this.error="";
         },
+
         getInfo(){
-            //Get information from musicbrainz if there is something in the input
+            //Get information from musicbrainz if there is something in the input            
                 this.loading=true;
 
                 axios
@@ -34,13 +44,12 @@ var app = new Vue({
                 .then(response=>{
                     this.responseData=response.data;
                     if(this.responseData.releases){
-                        this.initImages();
+                        this.initImages(response.data);
                     }                    
                 })
                 .catch(error=>{
                     this.errored=true;
-                    this.errorText=error.message;
-                    console.log(error);
+                    this.errorText=error.message;                    
                 })
                 .finally( () => {
                     if(!this.responseData.releases){
@@ -94,61 +103,83 @@ var app = new Vue({
                 }
                 return false;
         },
-        getImage(elementId,id){
+        getImage(elementId){
             //Get the cover of a release and store it in images
             //params : elementId = unique id of a release, id = id of the element in 'images'
-            //return : none                
-                axios
-                .get('https://coverartarchive.org/release/'+elementId)
-                .then(res=>{                    
-                    this.images[id] = res.data.images[0].thumbnails.small;                                      
-                }).finally(()=>{
-                    this.isImages.push(true); 
-                })
+            //return : none
+                return new Promise((res,rej)=>{
+                    axios
+                    .get('https://coverartarchive.org/release/'+elementId)
+                    .then(response=>{                    
+                        res(response);
+                    })
+                    .catch(error=>{
+                        rej(error.message);
+                    })
+                });
         },
-        initImages(){
-            //Initalize images array, set a default image and load images if there's a cover
+        initImages(variable){
+            //Initalize an array of images, set a default image and load images if there's a cover            
                 this.loading=true;
                 this.images=[];
-                this.isImages=[];
-                this.imageLoaded=false;
+                this.isImages=[];                
                 
-                this.responseData.releases.forEach(() => {
+                variable.releases.forEach(() => {
                     this.images.push('https://www.centrepompidou.fr/media/picture/c7/9c/c79c719092811639f7b5fcbc6f9488f9/dzi/image_files/10/1_1.jpg');
                 });
 
-                this.responseData.releases.forEach((element,id) => {
-                    this.getImage(element.id,id);                                
+                variable.releases.forEach((element,id) => {
+                    this.getImage(element.id)
+                    .then(res=>{
+                        this.images[id] = res.data.images[0].thumbnails.small;
+                    })
+                    .finally(()=>{
+                        this.isImages.push(true); 
+                    });                  
                 });
         },
         displayReleaseDetails(releaseId,imgSrc){
             //Display release details and set the position of the element clicked
                 this.previousPosition = window.scrollY;
-                this.getReleaseDetails(releaseId,imgSrc);
-        },
-        getReleaseDetails(releaseId,imgSrc){
-            //Get album information and tracks
-            //params : releaseId = id of the release, imgSrc = source of the cover of the release             
-                this.loading=true;
-                axios
-                .get('http://musicbrainz.org/ws/2/release/'+releaseId+'?inc=recordings+artists')
-                .then(response=>{
-                    this.albumDetailResponse=response.data;
-                    this.albumCoverSrc=imgSrc;                  
+                this.albumCoverSrc=imgSrc;
+                this.getReleaseDetails(releaseId).then(rej=>{
+                    if(this.artistDetails==true){
+                        this.artistDetails=false;                                                
+                    }
+                    this.albumDetailResponse=rej.data;
                     this.albumDetails=true;
                     this.scrollToTop();
-                }).catch(error=>{
-                    console.log(error.message);
-                }).finally(()=>{
-                    this.loading=false;
-                })
+                });      
         },
-        backToReleaseResult(){
+        getReleaseDetails(releaseId){
+            //Get album information and tracks
+            //params : releaseId = id of the release                
+                return new Promise((res,rej)=>{
+                    this.loading=true;    
+                    axios
+                    .get('https://musicbrainz.org/ws/2/release/'+releaseId+'?inc=recordings+artists')
+                    .then(response=>{
+                        res(response)
+                    }).catch(error=>{
+                        rej(error.message);
+                    }).finally(()=>{
+                        this.loading=false;
+                    })
+                })                
+        },
+        backToArtistResult(){
             //Display previous result
-                this.albumDetails=false;      
+                this.artistDetails=false;
                 setTimeout(()=>{
                     this.previousPosition=0;
                 },1);          
+        },
+        backToReleaseResult(){
+            //Display previous result
+                this.albumDetails=false;
+                setTimeout(()=>{
+                    this.previousPosition=0;
+                },1);
         },
         scrollToTop() {
             //Scroll to the top of the window
@@ -157,7 +188,32 @@ var app = new Vue({
         scrollToStoredItem(){
             //Scroll to a specific item in a list           
                 window.scrollTo(0,this.previousPosition);                
-        }
+        },
+        displayArtistDetails(artistId){
+            // Display every releases of the artist
+            // params : artistId = id of the artist wanted            
+                this.getArtistDetail(artistId)
+                .then(response=>{           
+                    this.previousPosition = window.scrollY;                    
+                    this.artistDetailResponse = response.data;
+                    this.initImages(response.data);
+                    this.artistDetails=true;                    
+                });
+        },
+        getArtistDetail(artistId){
+            // Find details about an artist by his id
+            // params : artistId = id of an artist
+            // return : information about an artist by his id
+                return new Promise((res,rej)=>{
+                    axios
+                    .get("http://musicbrainz.org/ws/2/artist/"+artistId+"?inc=releases")
+                    .then(response=>{
+                        res(response);
+                    }).catch(error=>{
+                        rej(error.message);
+                    })
+                });
+        }        
     },
     computed:{
         everythingIsLoaded:function(){

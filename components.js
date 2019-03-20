@@ -41,7 +41,7 @@ Vue.component('contentartists',{
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in artists" class="clickable">
+            <tr v-for="item in artists" class="clickable" v-on:click="$emit('artistclicked',item.id)">
                 <td>{{ item.name }} <i v-if="item.disambiguation">({{ item.disambiguation }})</i> </td>
                 <td><div v-if="item.type"><i :class="type( item.type )"></i></div></td>
                 <td><div v-if="item.area"><i :class="flag(item.area.name)"></i></div></td>
@@ -89,7 +89,7 @@ Vue.component('contentreleases',{
                 <td><div v-if="item.title">{{ item.title }}</div></td>
                 <td><div v-if="item['release-group']">{{ item['release-group']['primary-type'] }}</div></td>
                 <td><div v-if="item['track-count']">{{ item['track-count'] }}</div></td>
-                <td><div v-if="item['artist-credit'][0]">{{ item['artist-credit'][0].artist.name }}</div></td>                
+                <td><div v-if="item['artist-credit']">{{ item['artist-credit'][0].artist.name }}</div></td>                
                 <td><div v-if="item.date">{{ item.date }}</div></td>
                 <td><div v-if="item.media">{{ item.media[0].format }}</div></td>   
                 <td><div v-if="item['text-representation']">{{ item['text-representation'].language }}</div></td>
@@ -97,10 +97,7 @@ Vue.component('contentreleases',{
             <div v-if="releases.length==0">Aucun resultat.</div>                             
         </tbody>  
     </table>  
-    `,
-    methods: {
-
-    },
+    `
 })
 
 //Display albumdetails
@@ -112,7 +109,7 @@ Vue.component('albumdetails',{
                 <img :src="coversrc"/>                
                 <div class="row">
                     <div class="col">
-                        <div class="row">Album : </div>
+                        <div class="row">Titre : </div>
                         <div class="row">Artiste : </div>
                         <div class="row">Date de création : </div>
                     </div>
