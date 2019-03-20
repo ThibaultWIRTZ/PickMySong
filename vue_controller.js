@@ -1,8 +1,7 @@
 /* Principal vuejs file */
 
-var app = new Vue({
-    el:"#application",
-    data:{
+function setData(){
+    return {
         loading:false,           //Bool : True if the application load something
         errored:false,           //Bool : True if there is an error
         errorText:"",            //String : If there is an error that make the work of the application not work properly store the message        
@@ -25,14 +24,17 @@ var app = new Vue({
         searchType:"release",    //String : Type selected in the dropdown
         errorInput:false,        //Boolean : True if the search bar is empty        
         previousPosition:0,      //Integer : Contain the position on the window of the element we cicked
-        previousPage:''          //String : Name of the previous page
-    },
+        isDetail:''              //Boolean : True if artists details
+    }
+}
+
+var app = new Vue({
+    el:"#application",
+    data:setData(),
 
     methods:{
         backHome(){
-            this.albumDetails=false;
-            this.responseData="";
-            this.error="";
+            Object.assign(this.$data, setData());          
         },
 
         getInfo(){
@@ -144,7 +146,8 @@ var app = new Vue({
                 this.albumCoverSrc=imgSrc;
                 this.getReleaseDetails(releaseId).then(rej=>{
                     if(this.artistDetails==true){
-                        this.artistDetails=false;                                                
+                        this.artistDetails=false;
+                        this.isDetail=true;                                                
                     }
                     this.albumDetailResponse=rej.data;
                     this.albumDetails=true;
@@ -177,6 +180,10 @@ var app = new Vue({
         backToReleaseResult(){
             //Display previous result
                 this.albumDetails=false;
+                if(this.isDetail){
+                    this.isDetail=false;
+                    this.artistDetails=true;                                        
+                }
                 setTimeout(()=>{
                     this.previousPosition=0;
                 },1);
